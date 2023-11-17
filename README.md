@@ -23,4 +23,4 @@ FitnessTracker_v.4:
 
                      1) I get a list of steps by day for the week, display information about the last day
 
-                     2) I get a list of average values ​​of heartbeat measurements over a distance of one minute during the day, add all non-empty values ​​to the list and display the last value
+                     2) Displays information about the last heart rate reading (available in GoogleFit)
