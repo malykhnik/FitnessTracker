@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         fitnessOptions = FitnessOptions.builder()
                 .addDataType(TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .addDataType(AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                .addDataType(AGGREGATE_HEART_RATE_SUMMARY, FitnessOptions.ACCESS_READ)
                 .addDataType(TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ).build();
 //                .addDataType(TYPE_SLEEP_SEGMENT, FitnessOptions.ACCESS_READ).build();
 
@@ -156,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
     private void setSettingsForGettingSteps() {
         endTime = LocalDateTime.now().atZone(ZoneId.systemDefault());
         startTime = endTime.toLocalDate().minusWeeks(1).atStartOfDay(ZoneId.systemDefault());
-        Log.i(TAG, "Range Start: " + startTime);
-        Log.i(TAG, "Range End: " + endTime);
+        Log.i(TAG, "(Steps) Range Start: " + startTime);
+        Log.i(TAG, "(Steps) Range End: " + endTime);
 
         readRequest = new DataReadRequest.Builder()
                 .aggregate(TYPE_STEP_COUNT_DELTA)
@@ -173,34 +174,33 @@ public class MainActivity extends AppCompatActivity {
         Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
                 .addOnSuccessListener(response -> {
-                    if (response.getBuckets().size() > 0) {
-                        for (Bucket bucket : response.getBuckets()) {
-                            for (DataSet dataSet : bucket.getDataSets()) {
-                                Log.i(TAG, "Data returned for Data type " + dataSet.getDataType().getName());
-                                if (dataSet.isEmpty()) {
-                                    Log.i(TAG, "DataSet is Empty!!!!!!!!!!!!!!!!!");
-                                }
-                                for (DataPoint dp : dataSet.getDataPoints()) {
-                                    Log.i(TAG, "Data point:");
-                                    Log.i(TAG, "\tType: " + dp.getDataType().getName());
-                                    for (Field field : dp.getDataType().getFields()) {
-                                        // Добавление данных
-                                        Log.i(TAG, "\tField: " + field.getName() +
-                                                " Value: " + dp.getValue(field));
-                                        String value = String.valueOf(dp.getValue(field));
-                                        int stepsRate = Math.round(Integer.parseInt(value));
-                                        listStepsRate.add(stepsRate);
-                                        tvStepCount.setText(String.valueOf(dp.getValue(field)));
-                                    }
+                    for (Bucket bucket : response.getBuckets()) {
+                        for (DataSet dataSet : bucket.getDataSets()) {
+                            Log.i(TAG, "Data returned for Data type " + dataSet.getDataType().getName());
+                            if (dataSet.isEmpty()) {
+                                Log.i(TAG, "DataSet is Empty!!!!!!!!!!!!!!!!!");
+                            }
+                            for (DataPoint dp : dataSet.getDataPoints()) {
+                                Log.i(TAG, "Data point:");
+                                Log.i(TAG, "\tType: " + dp.getDataType().getName());
+                                for (Field field : dp.getDataType().getFields()) {
+                                    // Добавление данных
+                                    Log.i(TAG, "\tField: " + field.getName() +
+                                            " Value: " + dp.getValue(field));
+                                    String value = String.valueOf(dp.getValue(field));
+                                    int stepsRate = Math.round(Integer.parseInt(value));
+                                    listStepsRate.add(stepsRate);
+                                    tvStepCount.setText(String.valueOf(dp.getValue(field)));
                                 }
                             }
                         }
-                        if (listStepsRate.size() == 0) {
-                            tvStepCount.setText("Ты не походил!");
-                        } else {
-                            tvStepCount.setText(String.valueOf(listStepsRate.get(listStepsRate.size() - 1)));
-                        }
                     }
+                    if (listStepsRate.size() == 0) {
+                        tvStepCount.setText("Ты не походил!");
+                    } else {
+                        tvStepCount.setText(String.valueOf(listStepsRate.get(listStepsRate.size() - 1)));
+                    }
+
 
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to read steps rate data", e));
@@ -209,13 +209,13 @@ public class MainActivity extends AppCompatActivity {
     private void setSettingsForGettingHeartRate() {
         endTime = LocalDateTime.now().atZone(ZoneId.systemDefault());
         startTime = endTime.toLocalDate().minusDays(2).atStartOfDay(ZoneId.systemDefault());
-        Log.i(TAG, "Range Start: " + startTime);
-        Log.i(TAG, "Range End: " + endTime);
+        Log.i(TAG, "(Heart) Range Start: " + startTime);
+        Log.i(TAG, "(Heart) Range End: " + endTime);
 
         readRequest = new DataReadRequest.Builder()
-                .aggregate(TYPE_HEART_RATE_BPM)
+                .read(DataType.TYPE_HEART_RATE_BPM)
                 .enableServerQueries()
-                .bucketByTime(1, TimeUnit.MINUTES)
+                .bucketByTime(1, TimeUnit.HOURS)
                 .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(), TimeUnit.SECONDS)
                 .build();
     }
@@ -226,35 +226,33 @@ public class MainActivity extends AppCompatActivity {
         Fitness.getHistoryClient(this, account)
                 .readData(readRequest)
                 .addOnSuccessListener(response -> {
-                    if (response.getBuckets().size() > 0) {
-                        for (Bucket bucket : response.getBuckets()) {
-                            for (DataSet dataSet : bucket.getDataSets()) {
-                                Log.i(TAG, "Data returned for Data type " + dataSet.getDataType().getName());
-                                if (dataSet.isEmpty()) {
-                                    Log.i(TAG, "DataSet is Empty!!!!!!!!!!!!!!!!!");
-                                    continue;
-                                }
-                                for (DataPoint dp : dataSet.getDataPoints()) {
-                                    Log.i(TAG, "Data point:");
-                                    Log.i(TAG, "\tType: " + dp.getDataType().getName());
-                                    for (Field field : dp.getDataType().getFields()) {
-                                        // Добавление данных
-                                        Log.i(TAG, "\tField: " + field.getName() +
-                                                " Value: " + dp.getValue(field));
-                                        if (field.getName().equals("average")) {
-                                            String value = String.valueOf(dp.getValue(field));
-                                            int heartRate = (int) Math.round(Double.parseDouble(value));
-                                            listHeartRate.add(heartRate);
-                                        }
-                                    }
+                    for (Bucket bucket : response.getBuckets()) {
+                        for (DataSet dataSet : bucket.getDataSets()) {
+                            Log.i(TAG, "Data returned for Data type " + dataSet.getDataType().getName());
+                            if (dataSet.isEmpty()) {
+                                Log.i(TAG, "DataSet is Empty!!!!!!!!!!!!!!!!!");
+                                continue;
+                            }
+                            for (DataPoint dp : dataSet.getDataPoints()) {
+                                Log.i(TAG, "Data point:");
+                                Log.i(TAG, "\tType: " + dp.getDataType().getName());
+                                for (Field field : dp.getDataType().getFields()) {
+                                    // Добавление данных
+                                    Log.i(TAG, "\tField: " + field.getName() +
+                                            " Value: " + dp.getValue(field));
+                                    String value = String.valueOf(dp.getValue(field));
+                                    int heartRate = (int) Math.round(Double.parseDouble(value));
+                                    listHeartRate.add(heartRate);
+                                    Log.i(TAG, "heartRate: " + heartRate);
+
                                 }
                             }
                         }
-                        if (listHeartRate.size() == 0) {
-                            tvHeartCount.setText("Ты не измерил!");
-                        } else {
-                            tvHeartCount.setText(String.valueOf(listHeartRate.get(listHeartRate.size() - 1)));
-                        }
+                    }
+                    if (listHeartRate.size() == 0) {
+                        tvHeartCount.setText("Ты не измерил!");
+                    } else {
+                        tvHeartCount.setText(String.valueOf(listHeartRate.get(listHeartRate.size() - 1)));
                     }
 
                 })
