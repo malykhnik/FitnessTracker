@@ -195,7 +195,11 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        tvStepCount.setText(String.valueOf(listStepsRate.get(listStepsRate.size() - 1)));
+                        if (listStepsRate.size() == 0) {
+                            tvStepCount.setText("Ты не походил!");
+                        } else {
+                            tvStepCount.setText(String.valueOf(listStepsRate.get(listStepsRate.size() - 1)));
+                        }
                     }
 
                 })
@@ -204,15 +208,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void setSettingsForGettingHeartRate() {
         endTime = LocalDateTime.now().atZone(ZoneId.systemDefault());
-        startTime = endTime.toLocalDate().atStartOfDay(ZoneId.systemDefault());
-//        startTime = endTime.toLocalDate().minusWeeks(1).atStartOfDay(ZoneId.systemDefault());
+        startTime = endTime.toLocalDate().minusDays(2).atStartOfDay(ZoneId.systemDefault());
         Log.i(TAG, "Range Start: " + startTime);
         Log.i(TAG, "Range End: " + endTime);
 
         readRequest = new DataReadRequest.Builder()
                 .aggregate(TYPE_HEART_RATE_BPM)
                 .enableServerQueries()
-                .bucketByTime(1, TimeUnit.HOURS)
+                .bucketByTime(1, TimeUnit.MINUTES)
                 .setTimeRange(startTime.toEpochSecond(), endTime.toEpochSecond(), TimeUnit.SECONDS)
                 .build();
     }
@@ -247,7 +250,11 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        tvHeartCount.setText(String.valueOf(listHeartRate.get(listHeartRate.size() - 1)));
+                        if (listHeartRate.size() == 0) {
+                            tvHeartCount.setText("Ты не измерил!");
+                        } else {
+                            tvHeartCount.setText(String.valueOf(listHeartRate.get(listHeartRate.size() - 1)));
+                        }
                     }
 
                 })
