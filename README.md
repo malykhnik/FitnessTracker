@@ -1,4 +1,6 @@
 # FitnessTracker
+Note: Before starting, make sure you have GoogleFit downloaded on your device (emulator) 
+      and check if the data you need is available in the GoogleFit app
 FitnessTracker_v.1(Doesn't work correctly):
 
                      1) Project setup
