@@ -24,3 +24,5 @@ FitnessTracker_v.4:
                      1) I get a list of steps by day for the week, display information about the last day
 
                      2) Displays information about the last heart rate reading (available in GoogleFit)
+
+                     3) Information about the duration of sleep is displayed and information about the duration of each sleep phase is recorded in the List
