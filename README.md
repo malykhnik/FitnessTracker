@@ -1,5 +1,5 @@
 # FitnessTracker
-FitnessTracker_v.1:
+FitnessTracker_v.1(Doesn't work correctly):
 
                      1) Project setup
                      
@@ -9,17 +9,17 @@ FitnessTracker_v.1:
                      
                      4) Trying to get historical data
                      
-FitnessTracker_v.2:  
+FitnessTracker_v.2(Doesn't work correctly):  
 
                      1) Changing your Google account login
 
                      2) Reworking the function of getting steps
                      
-FitnessTracker_v.3:  
+FitnessTracker_v.3(Doesn't work correctly):  
 
                      1) So far trying to make everything work
 
-FitnessTracker_v.4:  
+FitnessTracker_v.4(WORKS CORRECTLY and all subsequent versions too!!!):  
 
                      1) I get a list of steps by day for the week, display information about the last day
 
