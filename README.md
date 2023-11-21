@@ -15,3 +15,8 @@ FitnessTracker_v.5:
                      1) In the new activity you can enter your first and last name; when you click on the saved button, the data for the current first and last name will be saved and a new UUID will be generated. 
                      
                      2) Each time you sign in, your last entry is saved, so if you don't want to change your GoogleAccount, you shouldn't make any changes.
+                     
+FitnessTracker_v.6:  
+
+                     1) Added queries (sending, checking and updating) to the server, from where data is sent to the database.
+                     
